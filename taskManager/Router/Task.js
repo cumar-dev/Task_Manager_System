@@ -79,9 +79,7 @@ router.get("/:id", protectedRout, getTaskById);
  *       401:
  *         description: Unauthorized
  */
-router.get("/", (req, res) => {
-  res.send("API is running");
-});
+
 router.post("/", protectedRout, createTask);
 /**
  * @swagger
