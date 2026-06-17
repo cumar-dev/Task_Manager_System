@@ -7,7 +7,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './Utils/swagger.js';
+import { swaggerSpec } from './Utils/Swagger.js';
 import { errorHandler } from "./Middlewares/errorHandler.js";
 import authRout from "./Router/Auth.js";
 import adminRout from "./Router/Admin.js";
