@@ -39,6 +39,9 @@ app.use("/auth", authRout);
 app.use("/admin", adminRout);
 app.use("/upload", uploadRout);
 app.use("/tasks", taskRout);
+app.use("/test", (req, res) => {
+  res.send("API is running");
+});
 app.use(errorHandler);
 
 mongoose
@@ -56,6 +59,3 @@ mongoose
 }
 );    
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});

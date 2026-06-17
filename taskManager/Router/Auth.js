@@ -4,7 +4,9 @@ import { protectedRout } from "../Middlewares/Authentication.js";
 import { validate } from "../Middlewares/Validate.js";
 import { createSchema } from "../Schemas/User.js";
 const router = express.Router();
-
+router.get("/test", (req, res) => {
+  res.send("API is running");
+});
 // register and logIn
 /**
  * @swagger
