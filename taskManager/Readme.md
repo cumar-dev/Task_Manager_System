@@ -1,9 +1,9 @@
 [✅] Github initialization
 [✅] MongoDb Atlas
-[✅] Render deployment
+[] Render deployment
 [✅] Environment variables
 [✅] Git ignore
-[✅] White list mongoDB Ip Address
+[] White list mongoDB Ip Address
 
 
 echo "# Task_Manager_System" >> README.md

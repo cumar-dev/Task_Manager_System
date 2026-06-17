@@ -40,6 +40,18 @@ app.use("/admin", adminRout);
 app.use("/upload", uploadRout);
 app.use("/tasks", taskRout);
 app.use(errorHandler);
-mongoose.connect(process.env.NODE_ENV == "development" ? process.env.MONGO_URL_DEV : process.env.MONGO_URL_PRO)
-    .then(() => console.log("✅ MongoDB connected locally"))
-    .catch((err) => console.log("❌ Connection err:", err))
+
+mongoose
+  .connect(process.env.NODE_ENV == "development" ? process.env.MONGO_URL_DEV : process.env.MONGO_URL_PRO)
+  .then(() => {
+    console.log("✅ MongoDB connected");
+    app.listen(PORT, () => {
+      console.log(
+        `🚀 server at http://localhost:${PORT} connected successfully`,
+      );
+    });
+  })
+ .catch((error) => {
+  console.error("❌ DB connection error:", error);
+}
+);    
