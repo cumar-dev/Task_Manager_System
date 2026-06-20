@@ -5,8 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon Backend/index.js"
+    "start": "node Backend/index.js",
+    "server": "nodemon Backend/index.js",
+    "client": "npm run dev --prefix Frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
@@ -31,5 +33,9 @@
     "swagger-ui-express": "^5.0.1",
     "xss-clean": "^0.1.4",
     "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "cross-spawn": "^7.0.6"
   }
 }
