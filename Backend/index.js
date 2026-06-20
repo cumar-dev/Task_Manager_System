@@ -23,7 +23,7 @@ app.use(cors({
   origin: [process.env.FRONTEND_URL, process.env.LOCAL_HOST],
   credentials: true
 }));
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -35,11 +35,11 @@ app.use(helmet());
 app.use(limiter);
 app.use(compression());
 // app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/auth", authRout);
-app.use("/admin", adminRout);
-app.use("/upload", uploadRout);
-app.use("/tasks", taskRout);
-app.use("/test", (req, res) => {
+app.use("/api/auth", authRout);
+app.use("/api/admin", adminRout);
+app.use("/api/upload", uploadRout);
+app.use("/api/tasks", taskRout);
+app.use("/api/test", (req, res) => {
   res.send("API is running");
 });
 app.use(errorHandler);
