@@ -19,22 +19,23 @@ mongoose.set("sanitizeFilter", true);
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
-app.use(cors({
-  origin: [process.env.FRONTEND_URL, process.env.LOCAL_HOST],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+// app.use(cors({
+//   origin: [process.env.FRONTEND_URL, process.env.LOCAL_HOST],
+//   credentials: true
+// }));
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 app.use(helmet());
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 min
-//   max: 100
-// });
 app.use(limiter);
 app.use(compression());
-// app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRout);
 app.use("/api/admin", adminRout);
 app.use("/api/upload", uploadRout);

@@ -1,26 +1,101 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
-
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import {
   Card,
   CardContent,
   CardHeader,
   CardFooter,
 } from "@/components/ui/card";
-
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { api } from "../../lib/api/apiClient";
+import { extractErrorMessages } from "../../../utils/errorUtils";
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const navigate = useNavigate();
+  const [formValues, setFormValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState(null);
+  const registerMutation = useMutation({
+    mutationFn: async (userData) => {
+      const response = await api.post(
+        "/auth/register",
+        userData,
+      );
+      console.log("respose", response);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log("success data", data);
+      navigate("/login")
+    },
+    onError: (error) => {
+      console.error(error);
+      setError(extractErrorMessages(error));
+      // const message =
+      //   error.response?.data?.message ||
+      //   error.response?.data?.error ||
+      //   error.message ||
+      //   "An error occurred during registration.";
 
+      // setError(message);
+      toast.error(message);
+
+      console.log(error.response?.data);
+      console.log(error.response?.data?.error);
+      console.log(error.response?.data?.errors);
+
+      toast.error(error.response?.data?.message || "Registration failed");
+    },
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
+    if (
+      !formValues.name ||
+      !formValues.email ||
+      !formValues.password ||
+      !formValues.confirmPassword
+    ) {
+      setError("All fields are required");
+      toast.error("Please fill all fields.");
+      return;
+    }
+
+    if (formValues.password !== formValues.confirmPassword) {
+      setError("do not much passwords");
+      toast.error("do not much the two passwords...");
+      return;
+    }
+    console.log(formValues);
+
+    registerMutation.mutate({
+      name: formValues.name,
+      email: formValues.email,
+      password: formValues.password,
+    });
+
+    toast.success("user registered successfully...");
     console.log("Register");
   };
 
@@ -51,15 +126,21 @@ const RegisterPage = () => {
           </CardHeader>
 
           <CardContent>
+            {error && (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 mb-4">
+                <p className="text-sm font-medium text-destructive">{error}</p>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Full Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
-                  id="name"
+                  name="name"
                   type="text"
                   placeholder="Omar Ahmed"
-                  required
+                  value={formValues.name}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -67,10 +148,11 @@ const RegisterPage = () => {
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
-                  id="email"
+                  name="email"
                   type="email"
                   placeholder="omar@example.com"
-                  required
+                  value={formValues.email}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -80,11 +162,10 @@ const RegisterPage = () => {
 
                 <div className="relative">
                   <Input
-                    id="password"
+                    name="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="********"
-                    className="pr-10"
-                    required
+                    value={formValues.password}
+                    onChange={handleChange}
                   />
 
                   <button
@@ -92,37 +173,26 @@ const RegisterPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">
-                  Confirm Password
-                </Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
 
                 <div className="relative">
                   <Input
-                    id="confirmPassword"
-                    type={
-                      showConfirmPassword ? "text" : "password"
-                    }
-                    placeholder="********"
-                    className="pr-10"
-                    required
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formValues.confirmPassword}
+                    onChange={handleChange}
                   />
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showConfirmPassword ? (
@@ -139,9 +209,7 @@ const RegisterPage = () => {
                 <Checkbox
                   id="terms"
                   checked={agreed}
-                  onCheckedChange={(checked) =>
-                    setAgreed(checked === true)
-                  }
+                  onCheckedChange={(checked) => setAgreed(checked === true)}
                 />
 
                 <label
@@ -149,9 +217,7 @@ const RegisterPage = () => {
                   className="text-sm text-muted-foreground cursor-pointer"
                 >
                   I agree to the{" "}
-                  <span className="text-primary hover:underline">
-                    Terms
-                  </span>{" "}
+                  <span className="text-primary hover:underline">Terms</span>{" "}
                   and{" "}
                   <span className="text-primary hover:underline">
                     Privacy Policy
@@ -163,9 +229,16 @@ const RegisterPage = () => {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!agreed}
+                disabled={!agreed || registerMutation.isPending}
               >
-                Create Account
+                {registerMutation.isPending ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                    Creating account...
+                  </span>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </form>
           </CardContent>

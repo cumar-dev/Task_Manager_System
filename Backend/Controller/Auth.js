@@ -3,12 +3,12 @@ import User from "../Model/User.js";
 
 export const register = async (req, res, next) => {
   let { name, email, password, role, profile } = req.body;
-
+  
   try {
-    if (!name || !email || !password || !role || !profile) {
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
+    
     email = email.toLowerCase();
 
     const emailExist = await User.findOne({ email });
@@ -20,8 +20,8 @@ export const register = async (req, res, next) => {
       name,
       email,
       password,
-      role,
-      profile,
+      // role,
+      // profile,
     });
 
     const token = jwtToken(createNewUser._id);
@@ -32,11 +32,10 @@ export const register = async (req, res, next) => {
         id: createNewUser._id,
         name: createNewUser.name,
         email: createNewUser.email,
-        role: createNewUser.role,
-        profile: createNewUser.profile
+        // role: createNewUser.role,
+        // profile: createNewUser.profile,
       },
     });
-
   } catch (error) {
     next(error);
   }
@@ -66,20 +65,18 @@ export const logIn = async (req, res, next) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
-        profile: user.profile
+        // role: user.role,
+        // profile: user.profile,
       },
     });
-
   } catch (error) {
     next(error);
   }
 };
 
-
 export const logOut = (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Logged out successfully"
+    message: "Logged out successfully",
   });
 };
