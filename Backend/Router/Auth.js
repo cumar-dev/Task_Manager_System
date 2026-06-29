@@ -3,6 +3,7 @@ import { logIn, logOut, register } from "../Controller/Auth.js";
 import { protectedRout } from "../Middlewares/Authentication.js";
 import { validate } from "../Middlewares/Validate.js";
 import { createSchema } from "../Schemas/User.js";
+import { promise } from "zod";
 const router = express.Router();
 router.get("/test", (req, res) => {
   res.send("API is running");
@@ -108,7 +109,8 @@ router.post("/logout", protectedRout, logOut);
  *       401:
  *         description: Unauthorized
  */
-router.get("/profile", protectedRout, (req, res) => {
+router.get("/profile", protectedRout,async (req, res) => {
+  await new promise(resolve => setTimeout(resolve, 5000));
   res.json(req.user);
 });
 export default router;
