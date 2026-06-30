@@ -1,9 +1,9 @@
 import express from "express";
-import { logIn, logOut, register } from "../Controller/Auth.js";
+import { forgetPassword, logIn, logOut, register, resetPassword } from "../Controller/Auth.js";
 import { protectedRout } from "../Middlewares/Authentication.js";
 import { validate } from "../Middlewares/Validate.js";
 import { createSchema } from "../Schemas/User.js";
-import { promise } from "zod";
+
 const router = express.Router();
 router.get("/test", (req, res) => {
   res.send("API is running");
@@ -82,6 +82,8 @@ router.post("/login", logIn);
  *         description: Unauthorized
  */
 router.post("/logout", protectedRout, logOut);
+router.post("/forget-password", forgetPassword);
+router.post("/reset-password", resetPassword);
 /**
  * @swagger
  * /auth/profile:
@@ -110,7 +112,7 @@ router.post("/logout", protectedRout, logOut);
  *         description: Unauthorized
  */
 router.get("/profile", protectedRout,async (req, res) => {
-  await new promise(resolve => setTimeout(resolve, 5000));
+  await new Promise(resolve => setTimeout(resolve, 5000));
   res.json(req.user);
 });
 export default router;
