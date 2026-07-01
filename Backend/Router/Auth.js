@@ -112,7 +112,7 @@ router.post("/reset-password", resetPassword);
  *         description: Unauthorized
  */
 router.get("/profile", protectedRout,async (req, res) => {
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  await new Promise(resolve => setTimeout(resolve, 3000));
   res.json(req.user);
 });
 export default router;
