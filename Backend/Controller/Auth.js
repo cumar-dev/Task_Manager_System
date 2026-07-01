@@ -36,8 +36,8 @@ export const register = async (req, res, next) => {
         id: createNewUser._id,
         name: createNewUser.name,
         email: createNewUser.email,
-        // role: createNewUser.role,
-        // profile: createNewUser.profile,
+        role: createNewUser.role,
+        profile: createNewUser.profile,
       },
     });
   } catch (error) {
@@ -112,21 +112,72 @@ export const forgetPassword = async (req, res) => {
 
     // Email template
     const html = `
-  <h2>Password Reset</h2>
+ <div style="margin:0; padding:0; background-color:#f4f5f7; font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7; padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#4f46e5; padding:28px 32px; text-align:center;">
+              <h1 style="margin:0; color:#ffffff; font-size:20px; font-weight:600;">
+                🔒 Password Reset
+              </h1>
+            </td>
+          </tr>
 
-  <p>Hello <strong>${user.name}</strong>,</p>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px;">
+              <p style="margin:0 0 16px; font-size:15px; color:#333333; line-height:1.6;">
+                Hello <strong>${user.name}</strong>,
+              </p>
+              <p style="margin:0 0 24px; font-size:15px; color:#333333; line-height:1.6;">
+                We received a request to reset your password. Click the button below to choose a new one.
+              </p>
 
-  <p>You requested to reset your password.</p>
+              <!-- Button -->
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
+                <tr>
+                  <td align="center" style="border-radius:8px; background-color:#4f46e5;">
+                    <a href="${resetUrl}" target="_blank"
+                      style="display:inline-block; padding:14px 32px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none; border-radius:8px;">
+                      Reset Password
+                    </a>
+                  </td>
+                </tr>
+              </table>
 
-  <p>
-    <a href="${resetUrl}" target="_blank">
-      ${resetUrl}
-    </a>
-  </p>
+              <p style="margin:0 0 16px; font-size:13px; color:#888888; line-height:1.5; text-align:center;">
+                Or copy and paste this link into your browser:<br>
+                <a href="${resetUrl}" target="_blank" style="color:#4f46e5; word-break:break-all;">${resetUrl}</a>
+              </p>
 
-  <p>This link will expire in <strong>15 minutes</strong>.</p>
+              <p style="margin:24px 0 0; font-size:14px; color:#e11d48; background-color:#fef2f2; padding:12px 16px; border-radius:8px; text-align:center;">
+                ⏱ This link will expire in <strong>15 minutes</strong>.
+              </p>
 
-  <p>If you didn't request this, ignore this email.</p>
+              <p style="margin:24px 0 0; font-size:13px; color:#999999; line-height:1.6;">
+                If you didn't request this, you can safely ignore this email — your password will remain unchanged.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 32px; background-color:#f9fafb; text-align:center;">
+              <p style="margin:0; font-size:12px; color:#aaaaaa;">
+                © ${new Date().getFullYear()} YourApp. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
 `;
     // Send email
     await sendEmail(user.email, "Reset Your Password", html);
@@ -180,7 +231,6 @@ export const resetPassword = async (req, res) => {
     return res.json({
       message: "Password reset successful",
     });
-
   } catch (error) {
     console.error("RESET PASSWORD ERROR:", error);
     return res.status(500).json({

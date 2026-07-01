@@ -1,6 +1,9 @@
 import express from "express";
 import { protectedRout } from "../Middlewares/Authentication.js";
-import { uploadFile } from "../Controller/UploadController.js";
+import {
+  updateProfileImage,
+  uploadFile,
+} from "../Controller/UploadController.js";
 import { upload } from "../Middlewares/Upload.js";
 const router = express.Router();
 /**
@@ -34,5 +37,16 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/profile-picture", protectedRout, upload.single("file"), uploadFile)
+router.post(
+  "/profile-picture",
+  protectedRout,
+  upload.single("file"),
+  uploadFile,
+);
+router.put(
+  "/profile-picture",
+  protectedRout,
+  upload.single("file"),
+  updateProfileImage,
+);
 export default router;
