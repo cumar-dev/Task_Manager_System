@@ -83,7 +83,7 @@ router.post("/login", logIn);
  */
 router.post("/logout", protectedRout, logOut);
 router.post("/forget-password", forgetPassword);
-router.post("/reset-password", resetPassword);
+router.post("/reset-password/:token", resetPassword);
 /**
  * @swagger
  * /auth/profile:
