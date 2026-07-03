@@ -1,31 +1,34 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  password: String,
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  profile: {
-    url: {
+const userSchema = new mongoose.Schema(
+  {
+    name: String,
+    email: {
       type: String,
-      default: "",
+      unique: true,
+      required: true,
     },
-    public_id: {
+    password: String,
+    role: {
       type: String,
-      default: "",
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    profile: {
+      url: {
+        type: String,
+        default: "",
+      },
+      public_id: {
+        type: String,
+        default: "",
+      },
     },
   },
-});
+  { timestamps: true },
+);
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

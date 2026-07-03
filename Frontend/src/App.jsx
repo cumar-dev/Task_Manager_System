@@ -6,11 +6,15 @@ import DashboardPage from "./Pages/DashboardPage/DashboardPage";
 import ProtectedRout from "./Pages/Auth/ProtectedRout";
 import AdminPrtectedRout from "./Pages/Auth/AdminPrtectedRout";
 import Admin from "./Pages/DashboardPage/Admin";
+import ResetPassword from "./Pages/Auth/ResetPassword";
+import ForgetPassword from "./Pages/Auth/ForgetPassword";
 function App() {
   return (
     <Routes>
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forget-password" element={<ForgetPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/home" element={<HomePage />} />
       <Route
         path="/dashboard"
@@ -28,7 +32,7 @@ function App() {
           </AdminPrtectedRout>
         }
       />
-      <Route path="/home" element={<HomePage />}/>
+      <Route path="/home" element={<HomePage />} />
     </Routes>
   );
 }

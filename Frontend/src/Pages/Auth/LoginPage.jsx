@@ -44,32 +44,32 @@ const LoginPage = () => {
       const response = await api.post("/auth/login", credentials);
       return response.data;
     },
-  onSuccess: (data) => {
-  if (!data?.token) return;
+    onSuccess: (data) => {
+      if (!data?.token) return;
 
-  const user = data.user;
-  const token = data.token;
+      const user = data.user;
+      const token = data.token;
+      if (!token) return;
+      setAuth(user, token);
 
-  setAuth(user, token);
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
 
-  if (rememberMe) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+      } else {
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("user", JSON.stringify(user));
 
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
-  } else {
-    sessionStorage.setItem("token", token);
-    sessionStorage.setItem("user", JSON.stringify(user));
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }
+      toast.success("Login successful!");
 
-  toast.success("Login successful!");
-
-  navigate("/dashboard");
-},
+      navigate("/dashboard");
+    },
     onError: (error) => {
       console.error("error", error);
       setError(extractErrorMessages(error));
@@ -144,7 +144,7 @@ const LoginPage = () => {
                 <Label>Password</Label>
 
                 <Link
-                  to="/forgot-password"
+                  to="/forget-password"
                   className="text-sm text-gray-500 hover:text-black"
                 >
                   Forgot Password?

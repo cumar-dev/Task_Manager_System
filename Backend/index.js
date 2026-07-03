@@ -15,7 +15,7 @@ import uploadRout from "./Router/Upload.js"
 import taskRout from "./Router/Task.js"
 import { limiter } from "./Middlewares/rateLimiter.js";
 dotenv.config();
-mongoose.set("sanitizeFilter", true);
+// mongoose.set("sanitizeFilter", true);
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
