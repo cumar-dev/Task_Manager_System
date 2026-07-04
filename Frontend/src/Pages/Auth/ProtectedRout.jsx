@@ -10,6 +10,7 @@ const ProtectedRout = ({ children }) => {
   console.log("User:", user);
   console.log("Authenticated:", isAuthenticated);
   const location = useLocation();
+
   const { data, error, isError, isSuccess, isLoading } = useQuery({
     queryKey: ["currentUser"],
     enabled: !!token, // Query only runs when token exists
@@ -38,10 +39,15 @@ const ProtectedRout = ({ children }) => {
 
   useEffect(() => {
     if (isError) {
-      return clearAuth();
+      clearAuth();
     }
   }, [isError, clearAuth, error]);
 
+  // No token
+
+  if (!token) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -54,17 +60,13 @@ const ProtectedRout = ({ children }) => {
       </div>
     );
   }
-  // No token
-
-  if (!token) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
 
   const storedToken =
     localStorage.getItem("token") || sessionStorage.getItem("token");
   if (!storedToken) {
     return <Navigate to="/login" replace />;
   }
+
   if (isError) {
     console.log("error here", isError);
     return <Navigate to="/login" state={{ from: location }} replace />;
