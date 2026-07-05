@@ -14,6 +14,7 @@ import ProtectedRout from "./Pages/Auth/ProtectedRout";
 import AdminPrtectedRout from "./Pages/Auth/AdminPrtectedRout";
 
 import Header from "./Pages/DashboardPage/Header";
+import ProfilePage from "./Pages/DashboardPage/ProfilePage";
 
 const noHeaderRoutes = [
   "/login",
@@ -77,6 +78,15 @@ function App() {
           element={
             <ProtectedRout>
               <DashboardPage />
+            </ProtectedRout>
+          }
+        />
+
+         <Route
+          path="/profile"
+          element={
+            <ProtectedRout>
+              <ProfilePage />
             </ProtectedRout>
           }
         />
