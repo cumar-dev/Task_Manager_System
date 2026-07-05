@@ -70,6 +70,8 @@ export const useAuthStore = create(
       // Get Token
       getToken: () => get().token,
     }),
+
+    //storage
     {
       name: "auth-storage",
 

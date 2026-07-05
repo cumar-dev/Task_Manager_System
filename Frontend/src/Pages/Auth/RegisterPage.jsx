@@ -44,13 +44,7 @@ const RegisterPage = () => {
     onError: (error) => {
       console.error(error);
       setError(extractErrorMessages(error));
-      // const message =
-      //   error.response?.data?.message ||
-      //   error.response?.data?.error ||
-      //   error.message ||
-      //   "An error occurred during registration.";
-
-      // setError(message);
+      
       toast.error(message);
 
       console.log(error.response?.data);
