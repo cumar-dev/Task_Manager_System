@@ -15,12 +15,9 @@ import AdminPrtectedRout from "./Pages/Auth/AdminPrtectedRout";
 
 import Header from "./Pages/DashboardPage/Header";
 import ProfilePage from "./Pages/DashboardPage/ProfilePage";
+import Footer from "./Pages/DashboardPage/Footer";
 
-const noHeaderRoutes = [
-  "/login",
-  "/register",
-  "/forget-password",
-];
+const noHeaderRoutes = ["/login", "/register", "/forget-password"];
 
 function Layout({ children }) {
   const location = useLocation();
@@ -28,11 +25,12 @@ function Layout({ children }) {
   const hideHeader =
     noHeaderRoutes.includes(location.pathname) ||
     location.pathname.startsWith("/reset-password");
-
+  
   return (
     <>
       {!hideHeader && <Header />}
       {children}
+      {!hideHeader && <Footer />}
     </>
   );
 }
@@ -47,10 +45,7 @@ function App() {
         <Route
           path="/"
           element={
-            <Navigate
-              to={isAuthenticated ? "/home" : "/login"}
-              replace
-            />
+            <Navigate to={isAuthenticated ? "/home" : "/login"} replace />
           }
         />
 
@@ -58,10 +53,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route
-          path="/reset-password/:token"
-          element={<ResetPassword />}
-        />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Protected Routes */}
         <Route
@@ -82,7 +74,7 @@ function App() {
           }
         />
 
-         <Route
+        <Route
           path="/profile"
           element={
             <ProtectedRout>
@@ -105,10 +97,7 @@ function App() {
         <Route
           path="*"
           element={
-            <Navigate
-              to={isAuthenticated ? "/home" : "/login"}
-              replace
-            />
+            <Navigate to={isAuthenticated ? "/home" : "/login"} replace />
           }
         />
       </Routes>
