@@ -23,9 +23,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/api/apiClient";
 
 const TASK_STATUSES = [
-  { value: "pending",     label: "Pending" },
-  { value: "in-progress", label: "In progress" },
-  { value: "done",        label: "Done" },
+  { value: "pending", label: "Pending" },
+  { value: "in progress", label: "In Progress" },
+  { value: "completed", label: "Completed" },
 ];
 
 const TaskForm = ({ open, onOpenChange, task }) => {
@@ -33,10 +33,10 @@ const TaskForm = ({ open, onOpenChange, task }) => {
   const [displayError, setDisplayError] = useState(null);
   const [validationError, setValidationError] = useState(null);
   const [formValues, setFormValues] = useState({
-    title:       task?.title       ?? "",
+    title: task?.title ?? "",
     description: task?.description ?? "",
-    status:      task?.status      ?? "pending",
-    dueDate:     task?.dueDate     ?? "",
+    status: task?.status ?? "pending",
+    dueDate: task?.dueDate ?? "",
   });
 
   const handleInputChange = (e) => {
@@ -49,7 +49,12 @@ const TaskForm = ({ open, onOpenChange, task }) => {
   };
 
   const handleCancel = () => {
-    setFormValues({ title: "", description: "", status: "pending", dueDate: "" });
+    setFormValues({
+      title: "",
+      description: "",
+      status: "pending",
+      dueDate: "",
+    });
     setValidationError(null);
     setDisplayError(null);
     onOpenChange(false);
@@ -67,7 +72,8 @@ const TaskForm = ({ open, onOpenChange, task }) => {
     },
     onError: (error) => {
       setDisplayError(
-        error?.response?.data?.message ?? "Something went wrong. Please try again."
+        error?.response?.data?.message ??
+          "Something went wrong. Please try again.",
       );
     },
   });
@@ -78,16 +84,24 @@ const TaskForm = ({ open, onOpenChange, task }) => {
     setDisplayError(null);
 
     // ✅ Fix 2: validation condition was wrong
-    if (!formValues.title || !formValues.description || !formValues.status || !formValues.dueDate) {
-      setValidationError("Please fill in all required fields.");
+    if (
+      !formValues.title ||
+      !formValues.description ||
+      !formValues.status ||
+      !formValues.dueDate
+    ) {
+      setValidationError("Please fill in all required fields...");
+      setDisplayError("please fill the fields as error not happens...");
       return;
     }
 
+    console.log("tasks: ", formValues);
+
     const taskData = {
-      title:       formValues.title.trim(),
+      title: formValues.title.trim(),
       description: formValues.description.trim(),
-      status:      formValues.status,
-      dueDate:     formValues.dueDate
+      status: formValues.status,
+      dueDate: formValues.dueDate
         ? new Date(formValues.dueDate).toISOString()
         : null,
     };
@@ -101,7 +115,6 @@ const TaskForm = ({ open, onOpenChange, task }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] rounded-3xl p-0 overflow-hidden [&>button]:hidden">
-
         {/* Header */}
         <div className="flex items-center justify-between px-7 pt-7 pb-4 border-b border-[#e5e5e5]">
           <div className="flex items-center gap-3">
@@ -127,7 +140,6 @@ const TaskForm = ({ open, onOpenChange, task }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="px-7 py-5 space-y-4">
-
           {/* Validation Error */}
           {validationError && (
             <Alert className="border-destructive/50 bg-destructive/10">
@@ -195,13 +207,15 @@ const TaskForm = ({ open, onOpenChange, task }) => {
                   {TASK_STATUSES.map((status) => (
                     <SelectItem key={status.value} value={status.value}>
                       <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full shrink-0 ${
-                          status.value === "done"
-                            ? "bg-green-500"
-                            : status.value === "in-progress"
-                            ? "bg-blue-500"
-                            : "bg-gray-400"
-                        }`} />
+                        <div
+                          className={`w-2 h-2 rounded-full shrink-0 ${
+                            status.value === "done"
+                              ? "bg-green-500"
+                              : status.value === "in-progress"
+                                ? "bg-blue-500"
+                                : "bg-gray-400"
+                          }`}
+                        />
                         {status.label}
                       </div>
                     </SelectItem>
@@ -211,7 +225,10 @@ const TaskForm = ({ open, onOpenChange, task }) => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="dueDate" className="text-sm font-semibold flex items-center gap-1.5">
+              <Label
+                htmlFor="dueDate"
+                className="text-sm font-semibold flex items-center gap-1.5"
+              >
                 <CalendarIcon size={13} className="text-muted-foreground" />
                 Due date
               </Label>
@@ -246,10 +263,13 @@ const TaskForm = ({ open, onOpenChange, task }) => {
                   <Loader2 size={15} className="animate-spin" />
                   {task ? "Updating..." : "Creating..."}
                 </span>
-              ) : task ? "Update task" : "Create task"}
+              ) : task ? (
+                "Update task"
+              ) : (
+                "Create task"
+              )}
             </Button>
           </div>
-
         </form>
       </DialogContent>
     </Dialog>

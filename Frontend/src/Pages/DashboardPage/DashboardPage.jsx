@@ -16,6 +16,8 @@ import {
 import { useAuthStore } from "@/lib/store/authStore";
 import { useState } from "react";
 import TaskForm from "../../components/Task/TaskForm";
+import TaskList from "../../components/Task/TaskList";
+// import StatCards from "../../components/Task/StatCards";
 
 const DashboardPage = () => {
   const { user, clearAuth } = useAuthStore();
@@ -53,6 +55,8 @@ const DashboardPage = () => {
         onOpenChange={handleFormClose}
         task={editingTask}
       />
+      <TaskList />
+      {/* <StatCards /> */}
     </div>
   );
 };
