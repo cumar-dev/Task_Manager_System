@@ -17,6 +17,8 @@ import { useAuthStore } from "@/lib/store/authStore";
 import { useState } from "react";
 import TaskForm from "../../components/Task/TaskForm";
 import TaskList from "../../components/Task/TaskList";
+import SearchForm from "../../components/Task/SerchForm";
+import TaskTabs from "../../components/Task/TaskTabs";
 // import StatCards from "../../components/Task/StatCards";
 
 const DashboardPage = () => {
@@ -57,6 +59,8 @@ const DashboardPage = () => {
       />
       <TaskList />
       {/* <StatCards /> */}
+      <SearchForm />
+      <TaskTabs />
     </div>
   );
 };
