@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api/apiClient";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
+import TaskCard from "./TaskCard";
 
 const TaskTabs = () => {
   const { data: tasks = [], isLoading, isError } = useQuery({
@@ -41,9 +42,8 @@ const TaskTabs = () => {
   }
 
   return (
-    <Tabs defaultValue="all" className="w-[98%] mx-3">
+     <Tabs defaultValue="all" className="w-[98%] mx-3">
 
-      {/* Tab Headers */}
       <TabsList className="w-full justify-start bg-transparent border-b border-[#e5e5e5] rounded-none p-0 h-auto mb-6">
         {tabs.map(({ value, label, count }) => (
           <TabsTrigger
@@ -67,7 +67,6 @@ const TaskTabs = () => {
         ))}
       </TabsList>
 
-      {/* Tab Contents */}
       {tabs.map(({ value, tasks: tabTasks }) => (
         <TabsContent key={value} value={value}>
           {tabTasks.length === 0 ? (
@@ -83,17 +82,7 @@ const TaskTabs = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {tabTasks.map((task) => (
-                <div
-                  key={task._id}
-                  className="bg-white border border-[#e5e5e5] rounded-2xl p-5"
-                >
-                  <p className="text-sm font-semibold text-foreground">
-                    {task.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                    {task.description}
-                  </p>
-                </div>
+                <TaskCard key={task._id} task={task} />
               ))}
             </div>
           )}
