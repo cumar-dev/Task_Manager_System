@@ -1,17 +1,39 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { api } from "../../lib/api/apiClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-const dummyStats = {
-  total: 0,
-  pending: 2,
-  inProgress: 1,
-  completed: 2,
-};
-
 const TaskList = () => {
-  
+  const {
+    data: tasks = [],
+    isLoading,
+    isError,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["task"],
+    retry: 1,
+    queryFn: async () => {
+      const response = await api.get("/tasks");
+      return response.data;
+    },
+  });
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 size={20} className="animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const total = tasks.length;
+
+  const pending = tasks.filter((task) => task.status === "pending").length;
+
+  const inProgress = tasks.filter(
+    (task) => task.status === "in progress",
+  ).length;
+
+  const completed = tasks.filter((task) => task.status === "completed").length;
   const stats = [
     {
       label: "Total",
@@ -39,29 +61,8 @@ const TaskList = () => {
       valueColor: "text-green-500",
     },
   ];
-
-  const {
-    data: tasks,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["task"],
-    retry: 1,
-    queryFn: async () => {
-      const response = await api.get("/tasks");
-      return response.data;
-    },
-  });
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <Loader2 size={20} className="animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
   return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-6 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-6 mb-6">
       {stats.map(({ label, value, dot, valueColor, icon }) => (
         <Card
           key={label}
@@ -78,9 +79,7 @@ const TaskList = () => {
                 icon
               )}
             </div>
-            <p className={`text-3xl font-semibold ${valueColor}`}>
-              {value}
-            </p>
+            <p className={`text-3xl font-semibold ${valueColor}`}>{value}</p>
           </CardContent>
         </Card>
       ))}
