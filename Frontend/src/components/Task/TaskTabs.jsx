@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api/apiClient";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { Loader2, SearchX } from "lucide-react";
 import TaskCard from "./TaskCard";
 
 const TaskTabs = ({ searchQuery = "" }) => {

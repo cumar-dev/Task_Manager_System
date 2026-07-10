@@ -7,7 +7,6 @@ import ForgetPassword from "./Pages/Auth/ForgetPassword";
 import ResetPassword from "./Pages/Auth/ResetPassword";
 
 import HomePage from "./Pages/HomePage";
-import DashboardPage from "./Pages/DashboardPage/DashboardPage";
 import Admin from "./Pages/DashboardPage/Admin";
 
 import ProtectedRout from "./Pages/Auth/ProtectedRout";
@@ -15,7 +14,11 @@ import AdminPrtectedRout from "./Pages/Auth/AdminPrtectedRout";
 
 import Header from "./Pages/DashboardPage/Header";
 import ProfilePage from "./Pages/DashboardPage/ProfilePage";
-import Footer from "./Pages/DashboardPage/Footer";
+import DashboardLayout from "./Pages/DashboardLayout";
+import OverviewPage from "./Pages/DashboardPage/OverviewPage";
+import AllTasksPage from "./Pages/DashboardPage/AllTasksPage";
+
+
 
 const noHeaderRoutes = ["/login", "/register", "/forget-password"];
 
@@ -25,12 +28,12 @@ function Layout({ children }) {
   const hideHeader =
     noHeaderRoutes.includes(location.pathname) ||
     location.pathname.startsWith("/reset-password");
-  
+
   return (
     <>
       {!hideHeader && <Header />}
       {children}
-      {!hideHeader && <Footer />}
+     
     </>
   );
 }
@@ -64,15 +67,18 @@ function App() {
             </ProtectedRout>
           }
         />
-
         <Route
           path="/dashboard"
           element={
             <ProtectedRout>
-              <DashboardPage />
+              <DashboardLayout />
             </ProtectedRout>
           }
-        />
+        >
+          <Route index element={<OverviewPage />} />
+          <Route path="tasks" element={<AllTasksPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+        </Route>
 
         <Route
           path="/profile"

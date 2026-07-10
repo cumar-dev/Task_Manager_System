@@ -162,7 +162,7 @@ const HomePage = () => {
       </section>
 
       {/* Footer */}
-      {/* <footer className="border-t border-[#e5e5e5] px-6 py-7">
+      <footer className="border-t border-[#e5e5e5] px-6 py-7">
         <div className="max-w-5xl mx-auto flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-foreground rounded-lg flex items-center justify-center">
@@ -187,7 +187,7 @@ const HomePage = () => {
             © 2025 TaskFlow. All rights reserved.
           </p>
         </div>
-      </footer> */}
+      </footer>
 
     </div>
   );
