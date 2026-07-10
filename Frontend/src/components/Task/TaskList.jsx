@@ -2,8 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { api } from "../../lib/api/apiClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 const TaskList = () => {
+
   const {
     data: tasks = [],
     isLoading,
@@ -62,28 +64,32 @@ const TaskList = () => {
     },
   ];
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-6 mb-6">
-      {stats.map(({ label, value, dot, valueColor, icon }) => (
-        <Card
-          key={label}
-          className="rounded-2xl border-[#e5e5e5] bg-white shadow-none"
-        >
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-muted-foreground font-medium">
-                {label}
-              </span>
-              {dot ? (
-                <div className={`w-2.5 h-2.5 rounded-full ${dot}`} />
-              ) : (
-                icon
-              )}
-            </div>
-            <p className={`text-3xl font-semibold ${valueColor}`}>{value}</p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-6 mb-6">
+        {stats.map(({ label, value, dot, valueColor, icon }) => (
+          <Card
+            key={label}
+            className="rounded-2xl border-[#e5e5e5] bg-white shadow-none"
+          >
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs text-muted-foreground font-medium">
+                  {label}
+                </span>
+                {dot ? (
+                  <div className={`w-2.5 h-2.5 rounded-full ${dot}`} />
+                ) : (
+                  icon
+                )}
+              </div>
+              <p className={`text-3xl font-semibold ${valueColor}`}>{value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      
+    </>
   );
 };
 

@@ -4,8 +4,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import TaskCard from "./TaskCard";
 
-const TaskTabs = () => {
-  const { data: tasks = [], isLoading, isError } = useQuery({
+const TaskTabs = ({ searchQuery = "" }) => {
+  const {
+    data: tasks = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
       const response = await api.get("/tasks");
@@ -13,16 +17,44 @@ const TaskTabs = () => {
     },
   });
 
-  const all        = tasks;
-  const pending    = tasks.filter((t) => t.status === "pending");
-  const inProgress = tasks.filter((t) => t.status === "in progress");
-  const completed  = tasks.filter((t) => t.status === "completed");
+  const filteredTasks = searchQuery.trim()
+    ? tasks.filter(
+        (task) =>
+          task.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.description?.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : tasks;
+
+  const all = filteredTasks;
+  const pending = filteredTasks.filter((t) => t.status === "pending");
+  const inProgress = filteredTasks.filter((t) => t.status === "in progress");
+  const completed = filteredTasks.filter((t) => t.status === "completed");
+
+  // const all        = tasks;
+  // const pending    = tasks.filter((t) => t.status === "pending");
+  // const inProgress = tasks.filter((t) => t.status === "in progress");
+  // const completed  = tasks.filter((t) => t.status === "completed");
 
   const tabs = [
-    { value: "all",         label: "All",         count: all.length,        tasks: all },
-    { value: "pending",     label: "Pending",     count: pending.length,    tasks: pending },
-    { value: "in-progress", label: "In Progress", count: inProgress.length, tasks: inProgress },
-    { value: "completed",   label: "Completed",   count: completed.length,  tasks: completed },
+    { value: "all", label: "All", count: all.length, tasks: all },
+    {
+      value: "pending",
+      label: "Pending",
+      count: pending.length,
+      tasks: pending,
+    },
+    {
+      value: "in-progress",
+      label: "In Progress",
+      count: inProgress.length,
+      tasks: inProgress,
+    },
+    {
+      value: "completed",
+      label: "Completed",
+      count: completed.length,
+      tasks: completed,
+    },
   ];
 
   if (isLoading) {
@@ -36,14 +68,15 @@ const TaskTabs = () => {
   if (isError) {
     return (
       <div className="flex items-center justify-center py-16">
-        <p className="text-sm text-destructive">Failed to load tasks. Please try again.</p>
+        <p className="text-sm text-destructive">
+          Failed to load tasks. Please try again.
+        </p>
       </div>
     );
   }
 
   return (
-     <Tabs defaultValue="all" className="w-[98%] mx-3">
-
+    <Tabs defaultValue="all" className="w-[98%] m-4">
       <TabsList className="w-full justify-start bg-transparent border-b border-[#e5e5e5] rounded-none p-0 h-auto mb-6">
         {tabs.map(({ value, label, count }) => (
           <TabsTrigger
@@ -69,7 +102,19 @@ const TaskTabs = () => {
 
       {tabs.map(({ value, tasks: tabTasks }) => (
         <TabsContent key={value} value={value}>
-          {tabTasks.length === 0 ? (
+          {searchQuery && tabTasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0f0f0]">
+                <SearchX size={22} className="text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium text-foreground">
+                No results for "{searchQuery}"
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Try searching with different keywords.
+              </p>
+            </div>
+          ) : tabTasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0f0f0]">
                 <i className="ti ti-clipboard-list text-muted-foreground text-xl" aria-hidden="true" />

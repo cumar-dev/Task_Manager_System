@@ -21,6 +21,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/api/apiClient";
+import { toast } from "sonner";
 
 const TASK_STATUSES = [
   { value: "pending", label: "Pending" },
@@ -36,7 +37,9 @@ const TaskForm = ({ open, onOpenChange, task }) => {
     title: task?.title ?? "",
     description: task?.description ?? "",
     status: task?.status ?? "pending",
-    dueDate: task?.dueDate ?? "",
+    dueDate: task?.dueDate
+      ? new Date(task.dueDate).toISOString().split("T")[0]
+      : "",
   });
 
   const handleInputChange = (e) => {
@@ -78,6 +81,25 @@ const TaskForm = ({ open, onOpenChange, task }) => {
     },
   });
 
+  const updateTaskMutation = useMutation({
+    mutationFn: async (taskData) => {
+      const response = await api.put(`/tasks/${task._id}`, taskData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success("Task updated successfully.");
+      handleCancel();
+    },
+    onError: (error) => {
+      console.log("Error:", error);
+      setDisplayError(
+        error?.response?.data?.message ??
+          "Something went wrong. Please try again.",
+      );
+    },
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setValidationError(null);
@@ -106,11 +128,17 @@ const TaskForm = ({ open, onOpenChange, task }) => {
         : null,
     };
 
-    createTaskMutation.mutate(taskData);
+    if (task) {
+      updateTaskMutation.mutate(taskData);
+    } else {
+      createTaskMutation.mutate(taskData);
+    }
   };
 
   // ✅ Fix 3: isLoading from mutation, not useState
-  const isLoading = createTaskMutation.isPending;
+  const isLoading = task
+    ? updateTaskMutation.isPending
+    : createTaskMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -17,14 +17,15 @@ import { useAuthStore } from "@/lib/store/authStore";
 import { useState } from "react";
 import TaskForm from "../../components/Task/TaskForm";
 import TaskList from "../../components/Task/TaskList";
-import SearchForm from "../../components/Task/SerchForm";
 import TaskTabs from "../../components/Task/TaskTabs";
-// import StatCards from "../../components/Task/StatCards";
+import SearchForm from "../../components/Task/SerchForm";
+
 
 const DashboardPage = () => {
   const { user, clearAuth } = useAuthStore();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
   const handleFormClose = () => {
     setShowCreateForm(false);
     setEditingTask(null);
@@ -44,7 +45,7 @@ const DashboardPage = () => {
             </CardDescription>
           </div>
           <Button
-            className="rounded-full gap-2 px-5 bg-white text-violet-700 hover:bg-white/90 font-semibold"
+            className="rounded-full gap-2 px-5 bg-white text-foreground hover:bg-white/90 font-semibold"
             onClick={() => setShowCreateForm(true)}
           >
             <Plus size={15} />
@@ -58,9 +59,9 @@ const DashboardPage = () => {
         task={editingTask}
       />
       <TaskList />
-      {/* <StatCards /> */}
-      <SearchForm />
-      <TaskTabs />
+      <SearchForm onSearch={setSearchTerm}/>
+      
+      <TaskTabs searchQuery={searchTerm}/>
     </div>
   );
 };
