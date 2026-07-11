@@ -19,7 +19,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-// mongoose.set("sanitizeFilter", true);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
