@@ -11,8 +11,9 @@ const TaskTabs = ({ searchQuery = "" }) => {
     isError,
   } = useQuery({
     queryKey: ["tasks"],
-    queryFn: async () => {
-      const response = await api.get("/tasks");
+    queryFn: async (data) => {
+      const response = await api.get("/tasks", data);
+      console.log("tasks loaded", response);
       return response.data;
     },
   });
