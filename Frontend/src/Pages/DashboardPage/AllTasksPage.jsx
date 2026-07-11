@@ -24,7 +24,7 @@ const AllTasksPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <Card className="rounded-none border-x-0 border-t-0 border-b bg-white shadow-none">
+      <Card className="rounded-none top-0 sticky z-50 border-x-0 border-t-0 border-b bg-white shadow-none">
         <CardHeader className="flex flex-row items-center justify-between px-8 py-5">
           <div>
             <CardTitle className="text-xl font-semibold">All Tasks</CardTitle>

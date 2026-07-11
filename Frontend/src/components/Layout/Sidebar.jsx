@@ -100,6 +100,8 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
           })}
         </nav>
 
+
+        
         {/* Footer */}
         {!collapsed && (
           <div className="px-4 py-4 border-t border-[#e5e5e5] shrink-0">

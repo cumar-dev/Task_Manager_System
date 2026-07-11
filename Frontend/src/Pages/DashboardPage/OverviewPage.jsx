@@ -15,7 +15,7 @@ const OverviewPage = () => {
     <div className="min-h-screen bg-white">
 
       {/* Header */}
-      <Card className="shadow-none rounded-none border-0 border-b border-[#e5e5e5] bg-white">
+      <Card className="shadow-none top-0 sticky z-50 rounded-none border-0 border-b border-[#e5e5e5] bg-white">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 px-8 py-5">
           <div>
             <CardTitle className="text-xl font-semibold text-foreground">
