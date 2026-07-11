@@ -30,31 +30,54 @@ import {
 import { toast } from "sonner";
 import TaskForm from "./TaskForm";
 const statusConfig = {
-  pending: { label: "Pending", badge: "bg-orange-500 text-white" },
-  "in progress": { label: "In Progress", badge: "bg-orange-500 text-white" },
-  completed: { label: "Completed", badge: "bg-orange-500 text-white" },
+  pending: {
+    label: "Pending",
+    badge: "bg-amber-50 text-amber-800",
+    btn: "bg-amber-50 text-amber-800",
+  },
+  "in progress": {
+    label: "In progress",
+    badge: "bg-blue-50 text-blue-800",
+    btn: "bg-blue-50 text-blue-800",
+  },
+  completed: {
+    label: "Completed",
+    badge: "bg-green-50 text-green-800",
+    btn: "bg-green-50 text-green-800",
+  },
 };
 
 const STATUS_BUTTONS = [
   { value: "pending", label: "Pending" },
-  { value: "in progress", label: "In Progress" },
+  { value: "in progress", label: "In progress" },
   { value: "completed", label: "Completed" },
 ];
 
 const TaskCard = ({ task }) => {
   const queryClient = useQueryClient();
-  const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
- 
+
   const updateStatus = useMutation({
     mutationFn: async (status) => {
       const res = await api.put(`/tasks/${task._id}`, { status });
       return res.data;
     },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const deleteTask = useMutation({
+    mutationFn: async () => {
+      await api.delete(`/tasks/${task._id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success("Task deleted.");
+      setShowDeleteDialog(false);
     },
+    onError: () => toast.error("Failed to delete task."),
   });
+
   const status = statusConfig[task.status] ?? statusConfig["pending"];
 
   const formatDate = (date) =>
@@ -65,36 +88,16 @@ const TaskCard = ({ task }) => {
           year: "numeric",
         })
       : null;
- 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.delete(`/tasks/${task._id}`);
-      return response.data;
-    },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["tasks"],
-      });
-      toast.success("task deleted successfully..");
-    },
-    onError: (error) => {
-      toast.error(`Error deleting task: ${error.message}`);
-      console.error("Error deleting task:", error);
-    },
-  });
-  const handleDeleteConfirm = async () => {
-    try {
-      await deleteMutation.mutateAsync(task._id);
-      setShowDeleteDialogue(false);
-    } catch (error) {
-      console.error("Error confirming delete:", error);
-      toast.error(`Error confirming delete: ${error.message}`);
-    }
+  const getActiveStyle = (value) => {
+    if (task.status !== value)
+      return "text-muted-foreground hover:bg-[#f0f0f0]";
+    return statusConfig[value]?.btn ?? "bg-[#f0f0f0] text-foreground";
   };
+
   return (
     <>
-      <div className="bg-white border border-[#e5e5e5] rounded-2xl p-5 flex flex-col gap-3 hover:shadow-sm transition-shadow mb-4">
+      <div className="bg-white border border-[#e5e5e5] rounded-2xl p-5 flex flex-col gap-3 hover:border-[#d0d0d0] transition-all">
         {/* Title + Badge + Menu */}
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-sm font-semibold text-foreground leading-snug flex-1">
@@ -102,14 +105,14 @@ const TaskCard = ({ task }) => {
           </h3>
           <div className="flex items-center gap-1.5 shrink-0">
             <span
-              className={`text-xs px-2.5 py-0.5 rounded-md font-medium ${status.badge}`}
+              className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${status.badge}`}
             >
               {status.label}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="h-6 w-6 flex items-center justify-center rounded-md hover:bg-[#f0f0f0] text-muted-foreground transition-colors">
-                  <MoreVertical size={14} />
+                  <MoreVertical size={13} />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -120,14 +123,14 @@ const TaskCard = ({ task }) => {
                   onClick={() => setShowEditForm(true)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm cursor-pointer"
                 >
-                  <Pencil size={14} className="text-muted-foreground" />
+                  <Pencil size={13} className="text-muted-foreground" />
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setShowDeleteDialogue(true)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm cursor-pointer"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
                 >
-                  <Trash size={14} className="text-muted-foreground" />
+                  <Trash size={13} />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -156,18 +159,13 @@ const TaskCard = ({ task }) => {
         )}
 
         {/* Status Buttons */}
-        <div className="flex items-center gap-1.5 p-1 border border-[#e5e5e5] rounded-xl">
+        <div className="flex items-center gap-1 p-1 border border-[#e5e5e5] rounded-xl">
           {STATUS_BUTTONS.map(({ value, label }) => (
             <button
               key={value}
               onClick={() => updateStatus.mutate(value)}
               disabled={updateStatus.isPending}
-              className={`flex-1 text-xs py-1.5 rounded-lg font-medium transition-all
-              ${
-                task.status === value
-                  ? "bg-orange-500 text-white"
-                  : "text-muted-foreground hover:bg-[#f0f0f0]"
-              }`}
+              className={`flex-1 text-xs py-1.5 rounded-lg font-medium transition-all ${getActiveStyle(value)}`}
             >
               {label}
             </button>
@@ -185,36 +183,40 @@ const TaskCard = ({ task }) => {
         )}
       </div>
 
-      {/* update exist form  */}
-
+      {/* Edit Form */}
       <TaskForm
         open={showEditForm}
         onOpenChange={setShowEditForm}
         task={task}
       />
 
-      {/* // show delete dialogue confirmation */}
-      <AlertDialog
-        open={showDeleteDialogue}
-        onOpenChange={setShowDeleteDialogue}
-      >
-        <AlertDialogContent>
+      {/* Delete Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              this action can't be undone. this will perminantly deltete the
-              task "{task.title}".
+              This will permanently delete{" "}
+              <span className="font-semibold text-foreground">
+                "{task.title}"
+              </span>
+              . This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>
-               {deleteMutation.isPending ? (
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteTask.mutate()}
+              className="rounded-xl bg-destructive text-white hover:bg-destructive/90"
+            >
+              {deleteTask.isPending ? (
                 <span className="flex items-center gap-2">
-                  <Loader2 size={14} className="animate-spin" />
+                  <Loader2 size={13} className="animate-spin" />
                   Deleting...
                 </span>
-              ) : "Delete"}
+              ) : (
+                "Delete"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

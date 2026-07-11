@@ -34,17 +34,17 @@ const OverviewPage = () => {
           </Button>
         </CardHeader>
       </Card>
-
-      {/* Content */}
-      <div className="px-6 py-6">
-        {/* <StatCards /> */}
-      </div>
-
+       
       <TaskForm
         open={showCreateForm}
         onOpenChange={setShowCreateForm}
       />
+      <div className="mt-8">
       <TaskList />
+      </div>
+
+      {/* TODO: Recent tasks */}
+      
     </div>
   );
 };

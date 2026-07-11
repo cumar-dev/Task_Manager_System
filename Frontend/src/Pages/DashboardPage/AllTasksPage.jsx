@@ -44,9 +44,11 @@ const AllTasksPage = () => {
         </CardHeader>
       </Card>
 
-      {/* Content */}
-      <div className="px-6 py-6 space-y-4">
+      <div className="mt-8">
         <SearchForm onSearch={setSearchTerm} />
+      </div>
+
+      <div className="mt-8">
         <TaskTabs searchQuery={searchTerm} />
       </div>
 
