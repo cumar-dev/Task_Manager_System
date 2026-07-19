@@ -2,7 +2,12 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 // import StatCards from "../../components/Task/StatCards";
 import TaskForm from "../../components/Task/TaskForm";
 import TaskList from "../../components/Task/TaskList";
@@ -13,7 +18,6 @@ const OverviewPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-
       {/* Header */}
       <Card className="shadow-none top-0 sticky z-50 rounded-none border-0 border-b border-[#e5e5e5] bg-white">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 px-8 py-5">
@@ -34,17 +38,11 @@ const OverviewPage = () => {
           </Button>
         </CardHeader>
       </Card>
-       
-      <TaskForm
-        open={showCreateForm}
-        onOpenChange={setShowCreateForm}
-      />
-      <div className="mt-8">
-      <TaskList />
-      </div>
 
-      {/* TODO: Recent tasks */}
-      
+      <TaskForm open={showCreateForm} onOpenChange={setShowCreateForm} />
+      <div className="mt-8">
+        <TaskList />
+      </div>
     </div>
   );
 };
